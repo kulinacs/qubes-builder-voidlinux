@@ -5,7 +5,7 @@ echo "--> Void Linux 00_prepare.sh"
 
 VOIDLINUX_PLUGIN_DIR="${VOIDLINUX_PLUGIN_DIR:-"${SCRIPTSDIR}/.."}"
 
-VOIDLINUX_SRC_PREFIX="${VOIDLINX_SRC_PREFIX:-https://repo.voidlinux.eu/static}"
+VOIDLINUX_SRC_PREFIX="${VOIDLINX_SRC_PREFIX:-https://repo.voidlinux.eu}"
 
 BINARY_TARBALL="xbps-static-latest.x86_64-musl.tar.xz"
 BINARY_CHECKSUM="sha256sums.txt"
@@ -14,12 +14,13 @@ GPG_ENV="GNUPGHOME=${CACHEDIR}/gpghome"
 [ "$VERBOSE" -ge 2 -o "$DEBUG" -gt 0 ] && set -x
 
 mkdir -p "${CACHEDIR}/xbps_cache"
+mkdir -p "${CACHEDIR}/bootstrap"
 
 echo "  --> Downloading XBPS statically linked binaries"
 
-http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/${BINARY_TARBALL}"
-http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/${BINARY_CHECKSUM}"
-http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/${BINARY_CHECKSUM}.asc"
+http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/static/${BINARY_TARBALL}"
+http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/static/${BINARY_CHECKSUM}"
+http_proxy="$REPO_PROXY" wget -N -P "$CACHEDIR" "${VOIDLINUX_SRC_PREFIX}/static/${BINARY_CHECKSUM}.asc"
 
 echo "  --> Preparing GnuPG to verify checksum signature..."
 mkdir -p "${CACHEDIR}/gpghome"

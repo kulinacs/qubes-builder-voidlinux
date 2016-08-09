@@ -1,0 +1,31 @@
+#!/bin/sh
+### prepare-chroot-base : Create a chroot instance of Void Linux
+### May be called from ./scripts/01_install_core.sh or ./prepare-chroot-voidlinux
+echo "--> Void Linux prepare-chroot-base"
+
+INSTALLDIR="$1"
+DISTRO="$2"
+
+BINARY_DIR="${CACHEDIR}/binary"
+XBPS_MIRROR="{XBPS_MIRROR:-https://repo.voidlinux.eu"
+
+XBPS_CACHE_DIR="${CACHEDIR}/xbps_cache"
+export XBPS_CACHE_DIR
+
+set -e
+[ "$VERBOSE" -ge 2 -o "$DEBUG" -gt 0 ] && set -x
+
+if ! [ -f "${BINARY_DIR}/.extracted" -e -d "${CACHEDIR}/xbps_cache" ]; then
+    echo "  --> Statically linked xbps may not exist, calling 00_prepare.sh"
+    "${SCRIPTSDIR}/00_prepare.sh"
+fi
+
+if [ -f "${INSTALLDIR}/.prepared_base" ]; then
+    echo "  --> NB: INSTALLDIR '${INSTALLDIR}' already appears to have an environment; will leave as-is!"
+    exit 0
+fi
+
+echo "  --> Installing to INSTALLDIR"
+${CACHEDIR}/binary/usr/bin/xbps-install -Sy -R "${XBPS_MIRROR}/current" -r "${INSTALLDIR}" -c "${XBPS_CACHE_DIR}" base-system
+
+touch "${INSTALLDIR}/.prepared_base"
